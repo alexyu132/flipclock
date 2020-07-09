@@ -35,8 +35,8 @@ const byte stepper_pins[][4] = { {7, 6, 5, 4},
                                {14, 15, 18, 19} };
 
 // Endstop pin definitions
-// Steppers 1 and 2 share an endstop pin due to pin constraints on the Pro Micro.
-// On boards with more pins available, each endstop should have its own pin.
+// The endstops for the tens and ones displays can be wired together and share a pin if needed.
+// This is necessary on the Pro Micro if you want to use the TX/RX pins for something else.
 // Same order as before: Hours, Minutes (Tens), Minutes (Ones)
 const byte endstop_pins[] = {21,20,20};
 
