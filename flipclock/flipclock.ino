@@ -40,6 +40,12 @@ const byte stepper_pins[][4] = { {7, 6, 5, 4},
 // Same order as before: Hours, Minutes (Tens), Minutes (Ones)
 const byte endstop_pins[] = {21,20,20};
 
+// LED pin - flashes slowly when an error is detected, powered off otherwise. Can comment out to disable this functionality.
+// On the Pro Micro, pin 30 is the TX LED.
+#define LED_PIN 30
+// Set this to true if a high signal turns off the LED.
+#define LED_INVERT true
+
 // Homing settings - modify these to calibrate your displays
 
 // Set these to the number that is displayed after the endstop is triggered.
@@ -64,6 +70,20 @@ RTC_DS3231 rtc;
   unsigned int year_old = 0;
   DateTime dst_start, dst_end;
 #endif
+
+// Stops the program. Flashes LED slowly if LED pin is defined.
+void e_stop() {
+  #if defined(LED_PIN)
+    while(1) {
+      digitalWrite(LED_PIN, HIGH);
+      delay(1000);
+      digitalWrite(LED_PIN, LOW);
+      delay(1000);
+    }
+  #else
+    abort();
+  #endif
+}
 
 void disable_stepper(const byte stepper_num) {
   digitalWrite(stepper_pins[stepper_num][0], LOW);
@@ -113,7 +133,7 @@ void step_to_home(const byte stepper_num, const unsigned int wait) {
     total_steps++;
     if(total_steps > STEPS_PER_REV * 2u) {
       disable_stepper(stepper_num);
-      abort();
+      e_stop();
     } 
     delayMicroseconds(wait);
   }
@@ -127,7 +147,7 @@ void step_to_home(const byte stepper_num, const unsigned int wait) {
     total_steps++;
     if(total_steps > STEPS_PER_REV * 2u) {
       disable_stepper(stepper_num);
-      abort();
+      e_stop();
     }
     delayMicroseconds(wait);
   }
@@ -197,8 +217,14 @@ void setup () {
   pinMode(endstop_pins[1], INPUT_PULLUP);
   pinMode(endstop_pins[2], INPUT_PULLUP);
 
-  if (! rtc.begin()) {
-    abort();
+  // Set LED pin to output and power it off
+  #if defined(LED_PIN)
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LED_INVERT);
+  #endif
+
+  if (!rtc.begin()) {
+    e_stop();
   }
 
   if (rtc.lostPower()) {
@@ -243,7 +269,7 @@ void setup () {
       // Similar to homing, if a max number of steps is reached, the endstop is assumed to have failed and the program aborts.
       total_steps += 200;
       if(total_steps > STEPS_PER_REV) {
-        abort();
+        e_stop();
       }
     }
   }
