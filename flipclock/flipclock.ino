@@ -46,6 +46,11 @@ const byte endstop_pins[] = {21,20,20};
 // Set this to true if a high signal turns off the LED.
 #define LED_INVERT true
 
+// On the Pro Micro, the RX LED is lit by default (annoying) and should be manually turned off.
+// Comment out the following 2 lines if your board doesn't have a second controllable LED.
+#define LED_PIN_2 17
+#define LED_2_INVERT true
+
 // Homing settings - modify these to calibrate your displays
 
 // Set these to the number that is displayed after the endstop is triggered.
@@ -94,18 +99,11 @@ void disable_stepper(const byte stepper_num) {
 
 void half_step(const byte stepper_num) {
   const byte pos = drive_step[stepper_num];
-  if(pos % 2 == 1) {
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 1) % 4], HIGH);
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 2) % 4], LOW);
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 3) % 4], LOW);
-    digitalWrite(stepper_pins[stepper_num][(pos/2) % 4], LOW);
-  } else {
-    digitalWrite(stepper_pins[stepper_num][(pos/2) % 4], HIGH);
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 1) % 4], HIGH);
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 2) % 4], LOW);
-    digitalWrite(stepper_pins[stepper_num][(pos/2 + 3) % 4], LOW);
-  }
-  drive_step[stepper_num] = (drive_step[stepper_num] + 1) % 8;
+  digitalWrite(stepper_pins[stepper_num][0], pos < 3);
+  digitalWrite(stepper_pins[stepper_num][1], ((pos + 6) % 8) < 3);
+  digitalWrite(stepper_pins[stepper_num][2], ((pos + 4) % 8) < 3);
+  digitalWrite(stepper_pins[stepper_num][3], ((pos + 2) % 8) < 3);
+  drive_step[stepper_num] = (pos + 1) % 8;
 }
 
 // Take the specified amount of steps for a stepper connected to the specified pins, with a
@@ -221,6 +219,12 @@ void setup () {
   #if defined(LED_PIN)
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, LED_INVERT);
+  #endif
+
+  // Turn off the second LED if needed
+  #if defined(LED_PIN_2)
+    pinMode(LED_PIN_2, OUTPUT);
+    digitalWrite(LED_PIN, LED_2_INVERT);
   #endif
 
   if (!rtc.begin()) {
