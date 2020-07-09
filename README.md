@@ -12,8 +12,8 @@ Arduino-powered clock using split-flap mechanical displays.
 # Non-printed parts
 |  Part | Quantity   | Notes  |
 |---|---|---|
-|  M3x10mm button head screw | 17  |   |
-|  M3 lock nut | 17 |   |
+|  M3x10mm button head bolt | 19  |   |
+|  M3 lock nut | 19 |   |
 | 28byj-48 stepper motor | 3 |   |
 | ULN2003 stepper driver | 3 |   |
 | Pro Micro or similar small Arduino (5V) | 1 |
@@ -39,7 +39,7 @@ The numbers on the flaps are inset by 0.2mm, so these parts are recommended to b
 
 ## Frame
 1. Attach each display to the faceplate using 2 bolts and lock nuts each.
-1. Attach the stand pieces to the sides of the faceplate and electronics tray. Secure everything together with a bolt and lock nut on each side of the faceplate.
+1. Attach the stand pieces to the sides of the faceplate and electronics tray. Use bolts and lock nuts to secure everything in place (4 total).
 
 ## Electronics
 1. To make cable management easier, the faceplate and stand pieces have zip tie attachment points. The hours display cables should be routed by the left stand, and the other displays should be routed towards the right stand. Due to the length of the stepper motor cables, it is cleaner to wire the stepper drivers in the opposite order of the displays, i.e. the rightmost driver is attached to the leftmost display.
