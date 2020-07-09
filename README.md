@@ -1,6 +1,8 @@
 # Flipclock
 Arduino-powered clock using split-flap mechanical displays.
 
+![Flip clock image](images/1.jpg)
+![Flip clock image](images/3.jpg)
 ## Features
 - Automatic time setting on sketch upload
 - RTC module keeps track of time even when unpowered
