@@ -49,7 +49,7 @@ The numbers on the flaps are inset by 0.2mm, so these parts are recommended to b
 1. Wire the RTC module to the I2C pins on the Arduino. On the Pro Micro, connect SDA to pin 2 and SCL to pin 3. Ground and VCC on the RTC should be wired to the corresponding pins on the Arduino.
 1. Wire the 5V and ground pins of the stepper driver to the VCC and ground pins, respectively, on the Arduino.
 1. Wire the steppers to the Arduino. On the Pro Micro, the recommended pins are 4, 5, 6, 7 for the hours display; 8, 9, 10, 16 for the tens display; and 14, 15, A0, A1 for the ones display.
-1. Wire one side of each endstop to ground on the Arduino, and the other side to an IO pin. On the Pro Micro, it's recommended to connect the hour endstop to A3, the tens endstop to A2, and the ones endstop to TX0 (digital 1). If you want to keep the TX/RX pins free for something else, the endstops for the tens and ones displays can be wired together and share a single pin.
+1. Wire one side of each endstop to ground on the Arduino, and the other side to an IO pin. On the Pro Micro, it's recommended to connect the hour endstop to A3, the tens endstop to A2, and the ones endstop to TX0 (digital 1). If you want to keep the TX/RX pins free for something else, the endstops for the tens and ones displays can be wired together and share the A2 pin.
 1. After everything is wired up, use double sided tape to stick the Arduino and RTC module to the electronics tray.
 1. Use zip ties through the rear stepper driver holes to secure the cables.
 
