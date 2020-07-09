@@ -48,7 +48,7 @@ const byte endstop_pins[] = {21,20,20};
 
 // On the Pro Micro, the RX LED is lit by default (annoying) and should be manually turned off.
 // Comment out the following 2 lines if your board doesn't have a second controllable LED.
-#define LED_PIN_2 17
+#define LED_2_PIN 17
 #define LED_2_INVERT true
 
 // Homing settings - modify these to calibrate your displays
@@ -222,9 +222,9 @@ void setup () {
   #endif
 
   // Turn off the second LED if needed
-  #if defined(LED_PIN_2)
-    pinMode(LED_PIN_2, OUTPUT);
-    digitalWrite(LED_PIN, LED_2_INVERT);
+  #if defined(LED_2_PIN)
+    pinMode(LED_2_PIN, OUTPUT);
+    digitalWrite(LED_2_PIN, LED_2_INVERT);
   #endif
 
   if (!rtc.begin()) {
