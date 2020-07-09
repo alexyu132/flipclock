@@ -21,6 +21,7 @@ Arduino-powered clock using split-flap mechanical displays.
 | PCB endstop | 3 | Will need to cut the switches off and solder leads to the C and NO pins |
 | Zip ties | Varies | |
 | Wires (22AWG or similar) | Varies | |
+| Double-sided tape | Varies | |
 
 # Printing
 The parts are designed to print without supports. Recommended layer height is 0.2mm or lower.
