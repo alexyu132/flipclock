@@ -10,6 +10,7 @@ Arduino-powered clock using split-flap mechanical displays.
 - Runs off of Arduino's USB power - no separate power input needed
 - Automatic calibration once per rotation using mechanical endstops
 - Steppers turned off when not moving for power savings
+- Endstop failure detection - shuts down if homing takes over 2 full rotations
 
 # Non-printed parts
 |  Part | Quantity   | Notes  |
