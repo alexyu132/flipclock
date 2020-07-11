@@ -21,6 +21,10 @@
 // If the clock runs slow by a few seconds, increase this value, and vice versa. Value cannot be negative.
 #define UPLOAD_OFFSET 5
 
+// Delay amount in ms added to the end of each loop iteration.
+// Some people have reported that reading the RTC time too often causes timing issues, so this value reduces the polling frequency.
+#define POLLING_DELAY 50
+
 // Number of repeated endstop reads during homing. Must be positive.
 // Leave this value alone unless homing is unreliable.
 #define ENDSTOP_DEBOUNCE_READS 3
@@ -314,4 +318,6 @@ void loop () {
   step_to_digit(2, ones, STEPPER_DELAY);
   step_to_digit(1, tens, STEPPER_DELAY);
   step_to_digit(0, hr, STEPPER_DELAY);
+
+  delay(POLLING_DELAY);
 }
