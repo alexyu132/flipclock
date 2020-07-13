@@ -1,5 +1,6 @@
 # Flipclock
 Arduino-powered clock using split-flap mechanical displays.
+https://www.youtube.com/watch?v=v2_D-W6b9TM
 
 ![Flip clock image](images/1.jpg)
 ![Flip clock image](images/3.jpg)
