@@ -6,6 +6,8 @@
 
 // ----------- BEGIN CONFIGURABLE SECTION -----------
 
+
+
 // Half steps needed for the motors to perform a single rotation.
 // Usually 4096 for 28byj-48 steppers
 #define STEPS_PER_REV 4096
@@ -14,8 +16,11 @@
 // Adjusts the speed of the displays. Higher value = slower
 #define STEPPER_DELAY 1400
 
-// Comment out the following line to disable DST support
-#define USE_DST
+// Comment out the following line to disable DST support if EU DST is used set your time zone
+#define USE_DST_US
+//#define USE_DST_EU
+//Timezone for EU
+#define timeZone 1
 
 // Adjust this to the time in seconds it takes to compile and upload to the Arduino
 // If the clock runs slow by a few seconds, increase this value, and vice versa. Value cannot be negative.
@@ -75,7 +80,7 @@ byte drive_step[] = {0, 0, 0};
 
 RTC_DS3231 rtc;
 
-#if defined(USE_DST)
+#if defined(USE_DST_US)
   unsigned int year_old = 0;
   DateTime dst_start, dst_end;
 #endif
@@ -206,6 +211,30 @@ void step_to_digit(const byte stepper_num, const byte digit, const unsigned int 
   disable_stepper(stepper_num);
 }
 
+bool DST_EU(int year, int month, int day, int hour)
+      {
+      // There is no DST in Jan, Feb, Nov, Dec
+      if(month < 3 || month > 10)
+      { 
+      return false;
+      }
+      //There is always DST in Apr, May, Jun, Jul, Aug, Sep
+      if(month > 3 && month < 10)
+      { 
+      return true;
+      }
+      //Determin if its summertime accoridng to the European normation
+      if(month == 3&&(hour+24*day)>=(1+timeZone+24*(31-(5*year/4+4)%7)) || month==10&&(hour+24*day)<(1+timeZone+24*(31-(5*year/4+1)%7)))
+      { 
+      return true;
+      }
+      
+      else
+      {
+      return false;
+      }
+      }
+
 void setup () {
   // Setting stepper pins to output
   for (byte i = 0; i < 3; i++) {
@@ -239,22 +268,34 @@ void setup () {
     // Set the time to the compile time + offset
     DateTime compile_time = DateTime(F(__DATE__), F(__TIME__)) + TimeSpan(UPLOAD_OFFSET);
     
-    #if defined(USE_DST)
+    #if defined(USE_DST_US)
       // Checking if compile time is in DST
       uint16_t year = compile_time.year();
-    
-      // DST starts on the second Sunday of March, 2AM
-      // Get beginning of second week and then offset to Sunday
+
+
+
+//      //DST for US      
+//      // DST starts on the second Sunday of March, 2AM
+//      // Get beginning of second week and then offset to Sunday
       DateTime dst_start = DateTime(year, 3, 8, 2, 0, 0);
       dst_start = dst_start + TimeSpan((7-dst_start.dayOfTheWeek()) % 7, 0, 0, 0);
-    
-      // DST ends on the first Sunday of November, 2AM
-      // Get first day of month and then offset to Sunday
+//    
+//      // DST ends on the first Sunday of November, 2AM
+//      // Get first day of month and then offset to Sunday
       DateTime dst_end = DateTime(year, 11, 1, 2, 0, 0);
       dst_end = dst_end + TimeSpan((7-dst_end.dayOfTheWeek()) % 7, 0, 0, 0);
-    
-      // If compile time is between DST start and end, then subtract 1 hour to get standard time
+//    
+//      // If compile time is between DST start and end, then subtract 1 hour to get standard time
       compile_time = compile_time >= dst_start && compile_time < dst_end ? (compile_time - TimeSpan(0,1,0,0)) : compile_time;
+    #endif
+
+    #if defined(USE_DST_EU)
+    
+      if(DST_EU(compile_time.year(), compile_time.month(), compile_time.day(), compile_time.hour()))
+      {
+      compile_time = compile_time - TimeSpan(0,1,0,0);  
+      }
+
     #endif
     
     rtc.adjust(compile_time);
@@ -292,12 +333,13 @@ void setup () {
 }
 
 void loop () {
+  
   DateTime now = rtc.now();
   byte hr = now.hour() % 12;
   byte tens = now.minute() / 10;
   byte ones = now.minute() % 10;
   
-  #if defined(USE_DST)
+  #if defined(USE_DST_US)
     // Calculate new DST cutoffs if the year changes
     if(now.year() != year_old) {
       // DST starts on the second Sunday of March, 2AM
@@ -314,6 +356,18 @@ void loop () {
     // If current time is between the DST cutoffs, add 1 to the hour digit
     hr = (now >= dst_start && now < dst_end) ? (hr + 1) % 12 : hr;
   #endif
+
+      #if defined(USE_DST_EU)
+
+      //DST for EU
+      if(DST_EU(now.year(), now.month(), now.day(), now.hour()))
+      {
+      hr = now.hour() + 1;  
+      }
+
+    #endif
+
+  
   
   step_to_digit(2, ones, STEPPER_DELAY);
   step_to_digit(1, tens, STEPPER_DELAY);
